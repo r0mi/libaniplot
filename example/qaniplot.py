@@ -1,7 +1,8 @@
 import sys
 import math
 import time
-from PySide import QtCore, QtGui
+from PyQt5 import QtCore, QtGui
+from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QScrollArea, QSizePolicy, QGridLayout
 
 sys.path.append('..')
 from aniplot import AniplotWidget
@@ -38,25 +39,25 @@ class SignalGenerator(object):
 
 if __name__ == '__main__':
 
-    class MainWindow(QtGui.QMainWindow):
+    class MainWindow(QMainWindow):
         def __init__(self):
             super(MainWindow, self).__init__()
 
             # setup GUI
-            centralWidget = QtGui.QWidget()
+            centralWidget = QWidget()
             self.setCentralWidget(centralWidget)
 
             self.aniplot = AniplotWidget()
 
-            self.glWidgetArea = QtGui.QScrollArea()
+            self.glWidgetArea = QScrollArea()
             self.glWidgetArea.setWidget(self.aniplot)
             self.glWidgetArea.setWidgetResizable(True)
             self.glWidgetArea.setHorizontalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
             self.glWidgetArea.setVerticalScrollBarPolicy(QtCore.Qt.ScrollBarAlwaysOff)
-            self.glWidgetArea.setSizePolicy(QtGui.QSizePolicy.Ignored, QtGui.QSizePolicy.Ignored)
+            self.glWidgetArea.setSizePolicy(QSizePolicy.Ignored, QSizePolicy.Ignored)
             self.glWidgetArea.setMinimumSize(50, 50)
 
-            centralLayout = QtGui.QGridLayout()
+            centralLayout = QGridLayout()
             centralLayout.addWidget(self.glWidgetArea, 0, 0)
             centralWidget.setLayout(centralLayout)
 
@@ -80,8 +81,8 @@ if __name__ == '__main__':
             # the graphs will lose their sync and it could be invisible. always update the slowest
             # graph at every tenth fastest graph update or something like that.. only the fastest
             # graph can use timers.
-            self.timer1.start(1. / self.ch1.freq * 1000.)
-            self.timer2.start(1. / self.ch2.freq * 1000.)
+            self.timer1.start(int(1. / self.ch1.freq * 1000.))
+            self.timer2.start(int(1. / self.ch2.freq * 1000.))
 
         def timer1_fired(self):
             self.ch1.append(self.source1.get())
@@ -89,7 +90,7 @@ if __name__ == '__main__':
         def timer2_fired(self):
             self.ch2.append(self.source2.get())
 
-    app = QtGui.QApplication(sys.argv)
+    app = QApplication(sys.argv)
     mainWin = MainWindow()
     mainWin.show()
     if sys.platform == "darwin":
