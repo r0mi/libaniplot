@@ -83,7 +83,7 @@ class GraphRenderer:
                 xcoord = w - self.font.width(txt) - 1
             else:
                 xcoord = 1
-            self.font.drawtl(txt, xcoord, px - self.font.height / 2., bgcolor = (c, c, c, .8), fgcolor = (1.9, 1.9, 1.9, .8))
+            self.font.drawtl(txt.encode('utf-8'), xcoord, px - self.font.height / 2., bgcolor = (c, c, c, .8), fgcolor = (1.9, 1.9, 1.9, .8))
 
             v += v_step
 
@@ -115,7 +115,7 @@ class GraphRenderer:
         st = st_begin
         while st < st_end:
             px = self._samplenum_to_pixel(st * ch.freq, x2, w2, w)
-            txt = self._grid_timestr(st, st_step)
+            txt = self._grid_timestr(st, st_step).encode('utf-8')
             self.font.drawtl(txt, px - self.font.width(txt) / 2. - 0.5, 1, bgcolor = (c, c, c, .8), fgcolor = (1.9, 1.9, 1.9, .8))
             st += st_step
 
@@ -259,7 +259,7 @@ class GraphRenderer:
 
             ch = self.channels[0]
             hh = (ch.value_max - ch.value_min) * 10.
-            gl.glColor4f(.13, 0.13, 0.13 ,1.)
+            gl.glColor4f(.13, 0.13, 0.13, 1.)
             gl.glBegin(gl.GL_QUADS)
             gl.glVertex3f( 0., ch.value_min - hh, 0. )
             gl.glVertex3f( w2, ch.value_min - hh, 0. )

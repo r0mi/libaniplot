@@ -1,7 +1,7 @@
 import copengl as gl
 
 
-def line(x1, y1, x2, y2, color=(1.,0.,0.,1.)):
+def line(x1, y1, x2, y2, color=(1., 0., 0., 1.)):
     if color:
         gl.glColor4f(*color)
     gl.glBegin(gl.GL_LINES)
@@ -9,7 +9,7 @@ def line(x1, y1, x2, y2, color=(1.,0.,0.,1.)):
     gl.glVertex3f( x2, y2, 0. )
     gl.glEnd()
 
-def rect(x, y, w, h, color=(1.,0.,0.,1.)):
+def rect(x, y, w, h, color=(1., 0., 0., 1.)):
     w -= 1; h -= 1
     if color:
         gl.glColor4f(*color)
@@ -20,7 +20,7 @@ def rect(x, y, w, h, color=(1.,0.,0.,1.)):
     gl.glVertex3f( x,   y+h, 0. )
     gl.glEnd()
 
-def filled_rect(x, y, w, h, color=(1.,0.,0.,1.)):
+def filled_rect(x, y, w, h, color=(1., 0., 0., 1.)):
     #w -= 1; h -= 1
     if color:
         gl.glColor4f(*color)

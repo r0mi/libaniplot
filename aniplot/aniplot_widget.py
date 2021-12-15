@@ -1,7 +1,7 @@
-from PySide import QtGui
+from PyQt5 import QtGui
 
-from aniplot_base import AniplotBase
-from graph_channel import GraphChannel
+from .aniplot_base import AniplotBase
+from .graph_channel import GraphChannel
 
 
 

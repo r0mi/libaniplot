@@ -1,1 +1,1 @@
-from aniplot_widget import AniplotWidget
+from .aniplot_widget import AniplotWidget

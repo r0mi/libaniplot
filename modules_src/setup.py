@@ -35,10 +35,10 @@ if sys.platform == "darwin":
     extra_link_args = ['-framework', 'OpenGL']
 elif sys.platform == "win32":
     libraries = ["opengl32"]
-elif sys.platform == "linux2":
+elif sys.platform == "linux":
     libraries = ["GL"]
 else:
-    raise RuntimeError("platform %s not supported" % (sys.platform))
+    raise RuntimeError(f"Platform {sys.platform} not supported")
 
 
 ext_cpp = Extension(
@@ -80,7 +80,7 @@ if "clean" in sys.argv:
     import os
     import shutil
     for p in ["cpp.cpp"]:
-        print "deleting", p
+        print("deleting", p)
         try:    os.remove(p)
         except: pass
     shutil.rmtree("build", True)

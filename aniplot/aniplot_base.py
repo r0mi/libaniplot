@@ -2,15 +2,15 @@ import os
 import sys
 import time
 import traceback
-from PySide import QtCore, QtGui, QtOpenGL
+from PyQt5 import QtCore, QtGui, QtOpenGL
 
 from OpenGL.GL import * # Otherwise gltext import fails
 import gltext
 import copengl as gl
 
-import fps_counter
-import graph_window
-import graph_renderer
+from . import fps_counter
+from . import graph_window
+from . import graph_renderer
 
 
 
@@ -18,6 +18,8 @@ class AniplotBase(QtOpenGL.QGLWidget):
     ''' Aniplot baseclass - this is not used directly in real application.
         Use AniplotWidget instead.
     '''
+    width = -1
+    height = -1
 
     def __init__(self, parent=None):
         super(AniplotBase, self).__init__(parent)
@@ -25,7 +27,7 @@ class AniplotBase(QtOpenGL.QGLWidget):
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.tick)
 
-        self.gltext = gltext.GLText(os.path.join(os.path.dirname(__file__), 'data', 'font_proggy_opti_small.txt'))
+        self.gltext = gltext.GLText(os.path.join(os.path.dirname(__file__), 'data', 'font_proggy_opti_small.txt').encode('utf-8'))
 
         self.setFocusPolicy(QtCore.Qt.StrongFocus)
         self.setFocus()
@@ -40,6 +42,8 @@ class AniplotBase(QtOpenGL.QGLWidget):
         self._mouse_last_pos = None # event.pos()
         self._mouse_dragging = False
         self._last_tick_time = time.time()
+        self.width = super().size().width()
+        self.height = super().size().height()
 
     def _start(self):
         ''' begins drawing if all channels are setup '''
@@ -117,7 +121,7 @@ class AniplotBase(QtOpenGL.QGLWidget):
 
             gl.glMatrixMode(gl.GL_MODELVIEW)
             gl.glLoadIdentity()
-            gl.glScalef(1.,1.,-1.)
+            gl.glScalef(1., 1., -1.)
 
             self.graph_window.x = -1
             self.graph_window.y = -1
@@ -129,13 +133,17 @@ class AniplotBase(QtOpenGL.QGLWidget):
             gl.glDisable(gl.GL_TEXTURE_2D)
             self.graph_window.render()
             gl.glEnable(gl.GL_TEXTURE_2D)
-            self.gltext.drawbr("fps: %.0f" % (self._fps_counter.fps), w, h, fgcolor = (.9, .9, .9, 1.), bgcolor = (0.3, 0.3, 0.3, .0))
-            self.gltext.drawbm("usage: arrows, shift, mouse", w/2, h-3, fgcolor = (.5, .5, .5, 1.), bgcolor = (0., 0., 0., .0))
+            self.gltext.drawbr(f"fps: {self._fps_counter.fps:.0f}".encode('utf-8'), w, h, fgcolor = (.9, .9, .9, 1.), bgcolor = (0.3, 0.3, 0.3, .0))
+            self.gltext.drawbm(b"usage: arrows, shift, mouse", w/2, h-3, fgcolor = (.5, .5, .5, 1.), bgcolor = (0., 0., 0., .0))
+
+    def size(self):
+        return QtCore.QSize(self.width, self.height)
 
     def resizeGL(self, width, height):
-        pass
+        self.width = width
+        self.height = height
 
-    @QtCore.Slot(QtGui.QKeyEvent)
+    @QtCore.pyqtSlot(QtGui.QKeyEvent)
     def keyPressEvent(self, event):
         key = event.key()
         if self.graph_window:
@@ -162,11 +170,11 @@ class AniplotBase(QtOpenGL.QGLWidget):
                 if key == QtCore.Qt.Key_Down:
                     self.graph_window.zoom_out(0., d)
 
-    @QtCore.Slot(QtGui.QKeyEvent)
+    @QtCore.pyqtSlot(QtGui.QKeyEvent)
     def keyReleaseEvent(self, event):
         pass
 
-    @QtCore.Slot(QtGui.QMouseEvent)
+    @QtCore.pyqtSlot(QtGui.QMouseEvent)
     def mousePressEvent(self, event):
         if self.graph_window:
             self._mouse_last_pos = event.pos()
@@ -174,14 +182,14 @@ class AniplotBase(QtOpenGL.QGLWidget):
                 self._mouse_dragging = True
                 self.graph_window.set_smooth_movement(False)
 
-    @QtCore.Slot(QtGui.QMouseEvent)
+    @QtCore.pyqtSlot(QtGui.QMouseEvent)
     def mouseReleaseEvent(self, event):
         if self.graph_window:
             if event.button() == QtCore.Qt.LeftButton:
                 self._mouse_dragging = False
                 self.graph_window.set_smooth_movement(True)
 
-    @QtCore.Slot(QtGui.QMouseEvent)
+    @QtCore.pyqtSlot(QtGui.QMouseEvent)
     def mouseMoveEvent(self, event):
         if self.graph_window:
             if not self._mouse_last_pos:

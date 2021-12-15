@@ -1,6 +1,6 @@
 import time
 
-from modules import cpp
+from .modules import cpp
 import copengl as gl
 
 
@@ -8,7 +8,7 @@ class GraphChannel:
     """
     hold MipBufRenderer and add some channel-specific variables
     """
-    def __init__(self, frequency, legend="graph", unit="V", color=(1.0,0.5,0.5,1.0,)):
+    def __init__(self, frequency, legend="graph", unit="V", color=(1.0, 0.5, 0.5, 1.0,)):
         """
         """
         self.freq = frequency
@@ -146,4 +146,4 @@ class GraphChannel:
 
 if __name__ == "__main__":
     g = GraphChannel(100.)
-    print "test done"
+    print("test done")

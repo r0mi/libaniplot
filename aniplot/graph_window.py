@@ -1,6 +1,6 @@
 import time
 
-import draw
+from . import draw
 import copengl as gl
 
 
@@ -89,14 +89,14 @@ class GraphWindow:
     def render(self):
         """ render everything. window edge, scrollbar, legend, and the graph itself. the graph object
          renders the grid, background, grid text and the graph line """
-        draw.filled_rect(self.x, self.y, self.w, self.h, (0.0,0.0,0.0,1.))
+        draw.filled_rect(self.x, self.y, self.w, self.h, (0.0, 0.0, 0.0, 1.))
         self._render_scrollbar(self.x, self.y + 1, self.w, 8)
 
         # render oscilloscope window edge
         gl.glPushMatrix()
-        gl.glTranslatef(.5,.5,0.)
+        gl.glTranslatef(.5, .5, 0.)
         gl.glLineWidth(1.)
-        draw.rect(self.x, self.y, self.w, self.h, (0.6,0.6,0.6,1.))
+        draw.rect(self.x, self.y, self.w, self.h, (0.6, 0.6, 0.6, 1.))
         gl.glPopMatrix()
 
         gl.glPushMatrix()
@@ -303,7 +303,7 @@ class GraphWindow:
 
     def _render_scrollbar(self, x, y, w, h):
         v = .6
-        draw.line(x + 0.5, y+h + 0.5, x+w, y + h + 0.5, (v,v,v,1.))
+        draw.line(x + 0.5, y+h + 0.5, x+w, y + h + 0.5, (v, v, v, 1.))
 
         adc_channel = self.graph_renderer.channels[0]
         if not adc_channel.size():
@@ -318,21 +318,21 @@ class GraphWindow:
         x1 = min(x1, w)
         x2 = min(x2, w)
         v = .8
-        draw.filled_rect(x1+x, y + 1., x2-x1, h - 2., (v,v,v,1.))
+        draw.filled_rect(x1+x, y + 1., x2-x1, h - 2., (v, v, v, 1.))
         v = .7
         #draw.rect(x1, y, x2-x1, h, (v,v,v,1.))
 
     def _render_legend(self, x, y):
         # render oscilloscope window edge
         gl.glPushMatrix()
-        gl.glTranslatef(.5,.5,0.)
+        gl.glTranslatef(.5, .5, 0.)
         gl.glLineWidth(1.)
         gl.glDisable(gl.GL_LINE_SMOOTH)
         # calculate legend window size
         w = 0.
         h = self.font.height * len(self.graph_renderer.channels)
         for channel in self.graph_renderer.channels:
-            w = max(w, self.font.width(channel.name))
+            w = max(w, self.font.width(channel.name.encode('utf-8')))
         # draw legend window background and border
         draw.filled_rect(x, y, w+24, h+4, (0.3, 0.3, 0.3, 0.3))
         draw.rect(x, y, w+24, h+4, (0.4, 0.4, 0.4, .8))
@@ -347,6 +347,6 @@ class GraphWindow:
         gl.glTranslatef(-.5, -.5, 0.)
         dy = y + 2.
         for channel in self.graph_renderer.channels:
-            self.font.drawtl(channel.name, x + 20, dy, bgcolor=(0.,0.,0.,0.), fgcolor=(0.9, 0.9, 0.9, .8))
+            self.font.drawtl(channel.name.encode('utf-8'), x + 20, dy, bgcolor=(0., 0., 0., 0.), fgcolor=(0.9, 0.9, 0.9, .8))
             dy += self.font.height
         gl.glPopMatrix()

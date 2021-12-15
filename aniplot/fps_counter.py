@@ -22,5 +22,5 @@ class FpsCounter:
             self._age     = 0.
             self._counter = 0.
             if self.print_log:
-                print "fps:", self.fps
+                print("fps:", self.fps)
 
