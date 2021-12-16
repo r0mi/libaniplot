@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QWidget, QScrollArea, QSi
 sys.path.append('..')
 from aniplot import AniplotWidget
 
+STANDARD_DPI = 96
 
 class SignalGenerator(object):
         ''' This can be used for testing purposes '''
@@ -90,8 +91,13 @@ if __name__ == '__main__':
         def timer2_fired(self):
             self.ch2.append(self.source2.get())
 
+    #QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True) #enable highdpi scaling
+    #QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True) #use highdpi icons
     app = QApplication(sys.argv)
-    mainWin = MainWindow()
+    display_dpi = max(app.desktop().logicalDpiX(), app.desktop().physicalDpiX())
+    scale = round(display_dpi * 1.0 / STANDARD_DPI)
+    print(f"Detected display DPI {display_dpi}, using {scale} x scaling")
+    mainWin = MainWindow(scale)
     mainWin.show()
     if sys.platform == "darwin":
         # this line is here because on macosx the main window always starts below the terminal that opened the app.
