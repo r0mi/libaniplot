@@ -40,14 +40,14 @@ class SignalGenerator(object):
 if __name__ == '__main__':
 
     class MainWindow(QMainWindow):
-        def __init__(self):
+        def __init__(self, scale=1):
             super(MainWindow, self).__init__()
 
             # setup GUI
             centralWidget = QWidget()
             self.setCentralWidget(centralWidget)
 
-            self.aniplot = AniplotWidget()
+            self.aniplot = AniplotWidget(scale)
 
             self.glWidgetArea = QScrollArea()
             self.glWidgetArea.setWidget(self.aniplot)
@@ -62,7 +62,7 @@ if __name__ == '__main__':
             centralWidget.setLayout(centralLayout)
 
             self.setWindowTitle("QAniplotTest")
-            self.resize(400, 300)
+            self.resize(400 * scale, 300 * scale)
 
             # setup data source
             self.source1 = SignalGenerator()

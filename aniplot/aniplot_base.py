@@ -20,9 +20,11 @@ class AniplotBase(QtOpenGL.QGLWidget):
     '''
     width = -1
     height = -1
+    scale = 1
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, scale=1):
         super(AniplotBase, self).__init__(parent)
+        self.scale = scale
 
         self.timer = QtCore.QTimer(self)
         self.timer.timeout.connect(self.tick)
@@ -49,7 +51,7 @@ class AniplotBase(QtOpenGL.QGLWidget):
         ''' begins drawing if all channels are setup '''
         self.grapher.setup(self.channels)
         # converts input events to smooth zoom/movement of the graph.
-        self.graph_window = graph_window.GraphWindow(self, font=self.gltext, graph_renderer=self.grapher, keys=None, x=0, y=0, w=10, h=10)
+        self.graph_window = graph_window.GraphWindow(self, font=self.gltext, graph_renderer=self.grapher, keys=None, x=0, y=0, w=10, h=10, scale=self.scale)
         self.timer.start(1./60*1000)
 
     def __del__(self):
@@ -121,7 +123,7 @@ class AniplotBase(QtOpenGL.QGLWidget):
 
             gl.glMatrixMode(gl.GL_MODELVIEW)
             gl.glLoadIdentity()
-            gl.glScalef(1., 1., -1.)
+            gl.glScalef(1. * self.scale, 1. * self.scale, -1.)
 
             self.graph_window.x = -1
             self.graph_window.y = -1
@@ -133,8 +135,8 @@ class AniplotBase(QtOpenGL.QGLWidget):
             gl.glDisable(gl.GL_TEXTURE_2D)
             self.graph_window.render()
             gl.glEnable(gl.GL_TEXTURE_2D)
-            self.gltext.drawbr(f"fps: {self._fps_counter.fps:.0f}".encode('utf-8'), w, h, fgcolor = (.9, .9, .9, 1.), bgcolor = (0.3, 0.3, 0.3, .0))
-            self.gltext.drawbm(b"usage: arrows, shift, mouse", w/2, h-3, fgcolor = (.5, .5, .5, 1.), bgcolor = (0., 0., 0., .0))
+            self.gltext.drawbr(f"fps: {self._fps_counter.fps:.0f}".encode('utf-8'), w / self.scale - 3, h / self.scale - 3, fgcolor = (.9, .9, .9, 1.), bgcolor = (0.3, 0.3, 0.3, .0))
+            self.gltext.drawbm(b"usage: arrows, shift, mouse", w / self.scale / 2, h / self.scale - 3, fgcolor = (.5, .5, .5, 1.), bgcolor = (0., 0., 0., .0))
 
     def size(self):
         return QtCore.QSize(self.width, self.height)

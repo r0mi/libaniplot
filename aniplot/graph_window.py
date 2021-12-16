@@ -8,7 +8,7 @@ class GraphWindow:
     """
     handles keyboard/mouse navigation (zoom/drag), border drawing. delegates graph rendering to self.graph_renderer
     """
-    def __init__(self, parent, font, graph_renderer, keys, x=0, y=0, w=100, h=50):
+    def __init__(self, parent, font, graph_renderer, keys, x=0, y=0, w=100, h=50, scale=1):
         """ TODO: w, h is with scrollbars and borders?
         :type graph_renderer: GraphRenderer
         """
@@ -18,6 +18,7 @@ class GraphWindow:
         self.keys = keys
         self.x, self.y = x, y
         self.w, self.h = w, h
+        self.scale = scale
 
         # render the legend window
         self.render_legend = True
@@ -89,23 +90,23 @@ class GraphWindow:
     def render(self):
         """ render everything. window edge, scrollbar, legend, and the graph itself. the graph object
          renders the grid, background, grid text and the graph line """
-        draw.filled_rect(self.x, self.y, self.w, self.h, (0.0, 0.0, 0.0, 1.))
-        self._render_scrollbar(self.x, self.y + 1, self.w, 8)
+        draw.filled_rect(self.x, self.y, self.w / self.scale, self.h / self.scale, (0.0, 0.0, 0.0, 1.))
+        self._render_scrollbar(self.x + 1, self.y + 1, (self.w - 2) / self.scale, 9)
 
         # render oscilloscope window edge
         gl.glPushMatrix()
         gl.glTranslatef(.5, .5, 0.)
         gl.glLineWidth(1.)
-        draw.rect(self.x, self.y, self.w, self.h, (0.6, 0.6, 0.6, 1.))
+        draw.rect(self.x / self.scale, self.y / self.scale, self.w / self.scale, self.h / self.scale, (0.6, 0.6, 0.6, 1.))
         gl.glPopMatrix()
 
         gl.glPushMatrix()
         x, y, w, h = self._raw_graph_window_dim()
         xx, yy = self.parent.gl_coordinates(x, y)
-        gl.glScissor(int(xx), int(yy - h), int(w), int(h))
+        gl.glScissor(int(xx + 1 * self.scale), int(yy - h + 1 * self.scale), int(w - 2 * self.scale), int(h + 9 - (2 + 9) * self.scale))
         gl.glEnable(gl.GL_SCISSOR_TEST)
         #print "sy1 %.2f sy2 %.2f sy2 - sy1 %.2f" % (self.sy1, self.sy2, self.sy2 - self.sy1)
-        self.graph_renderer.render(x, y, w, h, self.sx1, self.sy1, self.sx2 - self.sx1, self.sy2 - self.sy1)
+        self.graph_renderer.render(x, y, w / self.scale, (h - 9 * (self.scale - 1)) / self.scale, self.sx1, self.sy1, self.sx2 - self.sx1, self.sy2 - self.sy1)
         gl.glDisable(gl.GL_SCISSOR_TEST)
         gl.glPopMatrix()
 
@@ -303,7 +304,7 @@ class GraphWindow:
 
     def _render_scrollbar(self, x, y, w, h):
         v = .6
-        draw.line(x + 0.5, y+h + 0.5, x+w, y + h + 0.5, (v, v, v, 1.))
+        draw.line(x + 0.5, y + h, x + w - 0.5, y + h, (v, v, v, 1.))
 
         adc_channel = self.graph_renderer.channels[0]
         if not adc_channel.size():
@@ -315,10 +316,10 @@ class GraphWindow:
             x2 = x1 + 1.
         x1 = max(x1, 0.)
         x2 = max(x2, 0.)
-        x1 = min(x1, w)
-        x2 = min(x2, w)
+        x1 = min(x1, w - 2.)
+        x2 = min(x2, w - 2.)
         v = .8
-        draw.filled_rect(x1+x, y + 1., x2-x1, h - 2., (v, v, v, 1.))
+        draw.filled_rect(x1 + x + 1., y + 1., x2 - x1, h - 2., (v, v, v, 1.))
         v = .7
         #draw.rect(x1, y, x2-x1, h, (v,v,v,1.))
 

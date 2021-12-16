@@ -9,8 +9,8 @@ class AniplotWidget(AniplotBase):
 
     default_color = QtGui.QColor(30, 144, 255) # http://cloford.com/resources/colours/500col.htm dodgerblue 1
 
-    def __init__(self):
-        AniplotBase.__init__(self)
+    def __init__(self, scale=1):
+        AniplotBase.__init__(self, scale=scale)
 
     def create_channel(self, frequency=1000, value_min=0., value_min_raw=0., value_max=5., value_max_raw=255., legend="graph", unit="V", color=default_color):
         ''' Returns GraphChannel object.
