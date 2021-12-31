@@ -137,6 +137,9 @@ class AniplotBase(QtOpenGL.QGLWidget):
             gl.glEnable(gl.GL_TEXTURE_2D)
             self.gltext.drawbr(f"fps: {self._fps_counter.fps:.0f}".encode('utf-8'), w / self.scale - 3, h / self.scale - 3, fgcolor = (.9, .9, .9, 1.), bgcolor = (0.3, 0.3, 0.3, .0))
             self.gltext.drawbm(b"usage: arrows, shift, mouse", w / self.scale / 2, h / self.scale - 3, fgcolor = (.5, .5, .5, 1.), bgcolor = (0., 0., 0., .0))
+        else:
+            gl.glClearColor(0., 0., 0., 1.0)
+            gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
 
     def size(self):
         return QtCore.QSize(self.width, self.height)
